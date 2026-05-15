@@ -27,18 +27,16 @@ function buildApiUrls(path: string): string[] {
   const defaultApiPath = `/api${path}`;
 
   if (base) {
-    if (base.endsWith(API_PREFIX)) {
-      urls.push(`${base}${plainPath}`);
-    } else {
+    urls.push(`${base}${plainPath}`);
+    if (!base.endsWith(API_PREFIX)) {
       urls.push(`${base}${apiPath}`);
-      urls.push(`${base}${plainPath}`);
     }
     if (API_PREFIX !== "/api") {
       urls.push(`${base}${defaultApiPath}`);
     }
   } else {
-    urls.push(apiPath);
     urls.push(plainPath);
+    urls.push(apiPath);
     if (API_PREFIX !== "/api") {
       urls.push(defaultApiPath);
     }
