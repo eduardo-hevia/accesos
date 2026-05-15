@@ -9,29 +9,38 @@ import type {
   ServiceResult,
 } from "../../core/interfaces/index";
 
-const BASE_URL = (import.meta.env["VITE_API_BASE_URL"] as string)?.trim() || "";
-const API_PREFIX_RAW = (import.meta.env["VITE_API_BASE_PREFIX"] as string)?.trim() || "";
-const API_PREFIX = API_PREFIX_RAW === "" ? "" : `/${API_PREFIX_RAW.replace(/^\//, "").replace(/\/$/, "")}`;
+const BASE_URL_ENV = (import.meta.env["VITE_API_BASE_URL"] as string)?.trim();
+const BASE_URL = BASE_URL_ENV
+  ? BASE_URL_ENV.replace(/\/$/, "")
+  : typeof window !== "undefined"
+    ? window.location.origin
+    : "";
+const API_PREFIX_RAW = (import.meta.env["VITE_API_BASE_PREFIX"] as string)?.trim() || "/api";
+const API_PREFIX = `/${API_PREFIX_RAW.replace(/^\//, "").replace(/\/$/, "")}`;
 const SESSION_KEY = "bantrab_session";
 
 function buildApiUrls(path: string): string[] {
   const urls: string[] = [];
   const base = BASE_URL ? BASE_URL.replace(/\/$/, "") : "";
-  const withPrefix = `${API_PREFIX}${path}`;
-  const plain = path;
-  const apiPath = `${API_PREFIX === "/api" ? API_PREFIX : "/api"}${path}`;
+  const apiPath = `${API_PREFIX}${path}`;
+  const plainPath = path;
+  const defaultApiPath = `/api${path}`;
 
-  if (BASE_URL) {
-    urls.push(`${base}${withPrefix}`);
-    urls.push(`${base}${plain}`);
-    if (API_PREFIX !== "/api") {
+  if (base) {
+    if (base.endsWith(API_PREFIX)) {
+      urls.push(`${base}${plainPath}`);
+    } else {
       urls.push(`${base}${apiPath}`);
+      urls.push(`${base}${plainPath}`);
+    }
+    if (API_PREFIX !== "/api") {
+      urls.push(`${base}${defaultApiPath}`);
     }
   } else {
-    urls.push(withPrefix);
-    urls.push(plain);
+    urls.push(apiPath);
+    urls.push(plainPath);
     if (API_PREFIX !== "/api") {
-      urls.push(apiPath);
+      urls.push(defaultApiPath);
     }
   }
 
@@ -55,10 +64,21 @@ async function apiFetch<T>(
     let res: Response | null = null;
 
     for (const url of urls) {
-      res = await fetch(url, { ...options, headers });
-      if (res.ok || (res.status !== 404 && res.status !== 405)) {
+      try {
+        res = await fetch(url, { ...options, headers });
+      } catch {
+        continue;
+      }
+
+      if (res.ok) {
         break;
       }
+
+      if (res.status === 404 || res.status === 405) {
+        continue;
+      }
+
+      break;
     }
 
     if (!res) {
