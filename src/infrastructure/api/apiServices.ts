@@ -10,17 +10,17 @@ import type {
 } from "../../core/interfaces/index";
 
 const BASE_URL = (import.meta.env["VITE_API_BASE_URL"] as string)?.trim() || "";
-const API_PREFIX = (import.meta.env["VITE_API_BASE_PREFIX"] as string)?.trim() || "/api";
+const API_PREFIX_RAW = (import.meta.env["VITE_API_BASE_PREFIX"] as string)?.trim() || "";
+const API_PREFIX = API_PREFIX_RAW === "" ? "" : `/${API_PREFIX_RAW.replace(/^\//, "").replace(/\/$/, "")}`;
 const SESSION_KEY = "bantrab_session";
 
 function buildApiUrl(path: string): string {
   if (!BASE_URL) {
-    return `/api${path}`;
+    return `${API_PREFIX}${path}`;
   }
 
   const base = BASE_URL.replace(/\/$/, "");
-  const prefix = API_PREFIX === "" ? "" : `/${API_PREFIX.replace(/^\//, "")}`;
-  return `${base}${prefix}${path}`;
+  return `${base}${API_PREFIX}${path}`;
 }
 
 // ─── Fetch helper ─────────────────────────────────────────────────────────────
