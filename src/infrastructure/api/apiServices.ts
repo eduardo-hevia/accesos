@@ -14,13 +14,24 @@ const API_PREFIX_RAW = (import.meta.env["VITE_API_BASE_PREFIX"] as string)?.trim
 const API_PREFIX = API_PREFIX_RAW === "" ? "" : `/${API_PREFIX_RAW.replace(/^\//, "").replace(/\/$/, "")}`;
 const SESSION_KEY = "bantrab_session";
 
-function buildApiUrl(path: string): string {
-  if (!BASE_URL) {
-    return `${API_PREFIX}${path}`;
+function buildApiUrls(path: string): string[] {
+  const urls: string[] = [];
+  const base = BASE_URL ? BASE_URL.replace(/\/$/, "") : "";
+  const withPrefix = `${API_PREFIX}${path}`;
+
+  if (BASE_URL) {
+    urls.push(`${base}${withPrefix}`);
+    if (API_PREFIX !== "") {
+      urls.push(`${base}${path}`);
+    }
+  } else {
+    urls.push(withPrefix);
+    if (API_PREFIX !== "") {
+      urls.push(path);
+    }
   }
 
-  const base = BASE_URL.replace(/\/$/, "");
-  return `${base}${API_PREFIX}${path}`;
+  return urls;
 }
 
 // ─── Fetch helper ─────────────────────────────────────────────────────────────
@@ -36,7 +47,20 @@ async function apiFetch<T>(
       ...(options.headers ?? {}),
     };
 
-    const res = await fetch(buildApiUrl(path), { ...options, headers });
+    const urls = buildApiUrls(path);
+    let res: Response | null = null;
+
+    for (const url of urls) {
+      res = await fetch(url, { ...options, headers });
+      if (res.ok || (res.status !== 404 && res.status !== 405)) {
+        break;
+      }
+    }
+
+    if (!res) {
+      return { ok: false, code: "NETWORK_ERROR", message: "Error de conexión." };
+    }
+
     const json = (await res.json()) as ApiResponse<T>;
 
     if (!res.ok || !json.ok) {
