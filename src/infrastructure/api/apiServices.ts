@@ -10,7 +10,18 @@ import type {
 } from "../../core/interfaces/index";
 
 const BASE_URL = (import.meta.env["VITE_API_BASE_URL"] as string)?.trim() || "";
+const API_PREFIX = (import.meta.env["VITE_API_BASE_PREFIX"] as string)?.trim() || "/api";
 const SESSION_KEY = "bantrab_session";
+
+function buildApiUrl(path: string): string {
+  if (!BASE_URL) {
+    return `/api${path}`;
+  }
+
+  const base = BASE_URL.replace(/\/$/, "");
+  const prefix = API_PREFIX === "" ? "" : `/${API_PREFIX.replace(/^\//, "")}`;
+  return `${base}${prefix}${path}`;
+}
 
 // ─── Fetch helper ─────────────────────────────────────────────────────────────
 async function apiFetch<T>(
@@ -25,7 +36,7 @@ async function apiFetch<T>(
       ...(options.headers ?? {}),
     };
 
-    const res = await fetch(`${BASE_URL}/api${path}`, { ...options, headers });
+    const res = await fetch(buildApiUrl(path), { ...options, headers });
     const json = (await res.json()) as ApiResponse<T>;
 
     if (!res.ok || !json.ok) {
