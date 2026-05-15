@@ -18,20 +18,24 @@ function buildApiUrls(path: string): string[] {
   const urls: string[] = [];
   const base = BASE_URL ? BASE_URL.replace(/\/$/, "") : "";
   const withPrefix = `${API_PREFIX}${path}`;
+  const plain = path;
+  const apiPath = `${API_PREFIX === "/api" ? API_PREFIX : "/api"}${path}`;
 
   if (BASE_URL) {
     urls.push(`${base}${withPrefix}`);
-    if (API_PREFIX !== "") {
-      urls.push(`${base}${path}`);
+    urls.push(`${base}${plain}`);
+    if (API_PREFIX !== "/api") {
+      urls.push(`${base}${apiPath}`);
     }
   } else {
     urls.push(withPrefix);
-    if (API_PREFIX !== "") {
-      urls.push(path);
+    urls.push(plain);
+    if (API_PREFIX !== "/api") {
+      urls.push(apiPath);
     }
   }
 
-  return urls;
+  return Array.from(new Set(urls));
 }
 
 // ─── Fetch helper ─────────────────────────────────────────────────────────────
