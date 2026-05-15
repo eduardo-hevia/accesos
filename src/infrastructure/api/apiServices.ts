@@ -56,10 +56,13 @@ async function apiFetch<T>(
 
     for (const url of urls) {
       try {
+        // Log para debugging
+        console.log(`[API] ${options.method || "GET"} ${url}`);
+        
         lastRes = await fetch(url, {
-          ...options,
+          method: options.method,
+          body: options.body,
           headers,
-          credentials: "include",
         });
 
         if (lastRes.ok) {
