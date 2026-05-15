@@ -9,36 +9,28 @@ import type {
   ServiceResult,
 } from "../../core/interfaces/index";
 
-const BASE_URL_ENV = (import.meta.env["VITE_API_BASE_URL"] as string)?.trim();
-const BASE_URL = BASE_URL_ENV
-  ? BASE_URL_ENV.replace(/\/$/, "")
-  : typeof window !== "undefined"
-    ? window.location.origin
-    : "";
+const BASE_URL = (import.meta.env["VITE_API_BASE_URL"] as string)?.trim() || "";
 const API_PREFIX_RAW = (import.meta.env["VITE_API_BASE_PREFIX"] as string)?.trim() || "/api";
 const API_PREFIX = `/${API_PREFIX_RAW.replace(/^\//, "").replace(/\/$/, "")}`;
 const SESSION_KEY = "bantrab_session";
 
 function buildApiUrls(path: string): string[] {
   const urls: string[] = [];
-  const base = BASE_URL ? BASE_URL.replace(/\/$/, "") : "";
   const apiPath = `${API_PREFIX}${path}`;
   const plainPath = path;
-  const defaultApiPath = `/api${path}`;
 
-  if (base) {
-    urls.push(`${base}${plainPath}`);
-    if (!base.endsWith(API_PREFIX)) {
-      urls.push(`${base}${apiPath}`);
-    }
+  if (BASE_URL) {
+    // Si hay URL base explícita, úsala
+    const base = BASE_URL.replace(/\/$/, "");
+    urls.push(`${base}${apiPath}`);
     if (API_PREFIX !== "/api") {
-      urls.push(`${base}${defaultApiPath}`);
+      urls.push(`${base}${plainPath}`);
     }
   } else {
-    urls.push(plainPath);
+    // Sin URL base = rutas relativas (se resuelven al dominio actual automáticamente)
     urls.push(apiPath);
     if (API_PREFIX !== "/api") {
-      urls.push(defaultApiPath);
+      urls.push(plainPath);
     }
   }
 
@@ -59,41 +51,59 @@ async function apiFetch<T>(
     };
 
     const urls = buildApiUrls(path);
-    let res: Response | null = null;
+    let lastError: Error | null = null;
+    let lastRes: Response | null = null;
 
     for (const url of urls) {
       try {
-        res = await fetch(url, { ...options, headers });
-      } catch {
-        continue;
-      }
+        lastRes = await fetch(url, {
+          ...options,
+          headers,
+          credentials: "include",
+        });
 
-      if (res.ok) {
+        if (lastRes.ok) {
+          break;
+        }
+
+        if (lastRes.status === 404) {
+          continue;
+        }
+
         break;
-      }
-
-      if (res.status === 404 || res.status === 405) {
+      } catch (err) {
+        lastError = err instanceof Error ? err : new Error(String(err));
         continue;
       }
-
-      break;
     }
 
-    if (!res) {
-      return { ok: false, code: "NETWORK_ERROR", message: "Error de conexión." };
+    if (!lastRes) {
+      const msg = lastError?.message || "Error de conexión.";
+      return { ok: false, code: "NETWORK_ERROR", message: msg };
     }
 
-    const json = (await res.json()) as ApiResponse<T>;
+    try {
+      const json = (await lastRes.json()) as ApiResponse<T>;
 
-    if (!res.ok || !json.ok) {
-      return {
-        ok: false,
-        code: json.code ?? `HTTP_${res.status}`,
-        message: json.message ?? "Error desconocido.",
-      };
+      if (!lastRes.ok || !json.ok) {
+        return {
+          ok: false,
+          code: json.code ?? `HTTP_${lastRes.status}`,
+          message: json.message ?? `Error: ${lastRes.status} ${lastRes.statusText}`,
+        };
+      }
+
+      return { ok: true, data: json.data as T };
+    } catch {
+      if (!lastRes.ok) {
+        return {
+          ok: false,
+          code: `HTTP_${lastRes.status}`,
+          message: `Error: ${lastRes.status} ${lastRes.statusText}`,
+        };
+      }
+      return { ok: false, code: "PARSE_ERROR", message: "Respuesta inválida del servidor." };
     }
-
-    return { ok: true, data: json.data as T };
   } catch (err) {
     const message = err instanceof Error ? err.message : "Error de conexión.";
     return { ok: false, code: "NETWORK_ERROR", message };
