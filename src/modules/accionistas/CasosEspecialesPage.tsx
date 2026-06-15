@@ -4,29 +4,30 @@ import type { CasoEspecial, CasoEspecialFormData, EstadoPrecalificacion } from "
 import { useCasosEspeciales } from "../../application/hooks/useCasosEspeciales";
 import { CasoEspecialModal } from "./components/CasoEspecialModal";
 import { ConfirmDialog } from "./components/ConfirmDialog";
+import { HeaderStatCard, IcoBan, IcoCheck, IcoDate, IcoUsers, PageHeader } from "../../ui/layout";
 import type { AuthSession } from "../../core/entities/index";
 
 // ── Design tokens ─────────────────────────────────────────────────────────────
 const C = {
-  teal:"#2BAB8E", tealDk:"#1d8a70", tealLt:"#E6F4F1", tealPill:"#D1EDE8",
-  gold:"#E6920A", goldLt:"#FEF3DC",
-  red:"#DC2626",  redLt:"#FEE2E2",
-  blue:"#2563EB", blueLt:"#EFF6FF",
-  green:"#16A34A",greenLt:"#DCFCE7",
+  teal:"var(--teal)", tealDk:"var(--teal-dk)", tealLt:"var(--teal-lt)", tealPill:"var(--teal-pill)",
+  gold:"var(--gold)", goldLt:"var(--gold-lt)",
+  red:"var(--red)",  redLt:"var(--red-lt)",
+  blue:"var(--blue)", blueLt:"var(--blue-lt)",
+  green:"var(--green)",greenLt:"var(--green-lt)",
   purple:"#7C3AED",purpleLt:"#F5F3FF",
-  bg:"#F4F5F7", white:"#FFFFFF", border:"#E4E7EC",
-  g50:"#F9FAFB", g100:"#F3F4F6", g200:"#E5E7EB",
-  g300:"#D1D5DB", g400:"#9CA3AF", g500:"#6B7280",
-  g600:"#4B5563", g700:"#374151", g900:"#111827",
+  bg:"var(--bg)", white:"var(--white)", border:"var(--border)",
+  g50:"var(--g50)", g100:"var(--g100)", g200:"var(--g200)",
+  g300:"var(--g300)", g400:"var(--g400)", g500:"var(--g500)",
+  g600:"var(--g600)", g700:"var(--g700)", g900:"var(--g900)",
 } as const;
 
 // ── Estado badge config ───────────────────────────────────────────────────────
 const ESTADO_CFG: Record<EstadoPrecalificacion, { bg: string; color: string; dot: string }> = {
-  "Denegado":                          { bg:"#FEE2E2", color:"#991B1B", dot:"#DC2626" },
-  "Fallecido":                         { bg:"#F3F4F6", color:"#374151", dot:"#6B7280" },
-  "Revocado":                          { bg:"#F5F3FF", color:"#5B21B6", dot:"#7C3AED" },
-  "Limitación Participación Asamblea": { bg:"#D1EDE8", color:"#1d8a70", dot:"#2BAB8E" },
-  "Acciones Adquiridas Anómalamente":  { bg:"#FEF3DC", color:"#92400E", dot:"#E6920A" },
+  "Denegado":                          { bg:"var(--red-lt)", color:"var(--red)", dot:"var(--red)" },
+  "Fallecido":                         { bg:"var(--g100)", color:"var(--g700)", dot:"var(--g400)" },
+  "Revocado":                          { bg:"rgba(124,58,237,.16)", color:"#A78BFA", dot:"#8B5CF6" },
+  "Limitación Participación Asamblea": { bg:"var(--teal-pill)", color:"var(--teal-dk)", dot:"var(--teal)" },
+  "Acciones Adquiridas Anómalamente":  { bg:"var(--gold-lt)", color:"var(--gold)", dot:"var(--gold)" },
 };
 
 // ── Sub-components ────────────────────────────────────────────────────────────
@@ -52,8 +53,8 @@ function TipDocBadge({ tipo }: { tipo: string }) {
     <span style={{
       display:"inline-flex", alignItems:"center", gap:4,
       fontSize:10, fontWeight:700, padding:"2px 8px", borderRadius:999,
-      background: isDP ? C.tealPill : C.goldLt,
-      color: isDP ? C.tealDk : "#92400E",
+      background: isDP ? "var(--badge-teal-bg)" : C.goldLt,
+      color: isDP ? "var(--badge-teal-text)" : C.gold,
       letterSpacing:"0.04em",
     }}>
       <span style={{ width:5, height:5, borderRadius:"50%", background: isDP ? C.teal : C.gold, display:"inline-block" }} />
@@ -67,7 +68,7 @@ function IdBadge({ id }: { id: string }) {
     <span style={{
       display:"inline-flex", alignItems:"center",
       fontSize:11, fontWeight:700, padding:"3px 9px", borderRadius:6,
-      background:C.tealPill, color:C.tealDk, fontVariantNumeric:"tabular-nums",
+      background:"var(--badge-id-bg)", color:"var(--badge-id-text)", fontVariantNumeric:"tabular-nums",
     }}>{id}</span>
   );
 }
@@ -142,7 +143,7 @@ type ModalState =
 const TODOS_ESTADOS = "Todos los estados";
 const CAMPOS_BUSQUEDA = ["DPI y Cédula", "Nombre", "No. Documento"];
 
-export function CasosEspecialesPage({ session, onLogout }: CasosEspecialesPageProps) {
+export function CasosEspecialesPage({ session }: CasosEspecialesPageProps) {
   const {
     casos, bitacora, stats, loading, saving,
     error, success, crear, editar, eliminar, cargaMasiva, clearFeedback,
@@ -202,8 +203,8 @@ export function CasosEspecialesPage({ session, onLogout }: CasosEspecialesPagePr
 
   const colHd: React.CSSProperties = {
     padding:"10px 14px", fontSize:10, fontWeight:700,
-    color:C.g400, textTransform:"uppercase" as const, letterSpacing:"0.08em",
-    textAlign:"left" as const, borderBottom:`2px solid ${C.border}`,
+    color:C.g500, textTransform:"uppercase" as const, letterSpacing:"0.08em",
+    textAlign:"left" as const, borderBottom:`1.5px solid ${C.border}`,
     whiteSpace:"nowrap" as const, background:C.white,
   };
 
@@ -213,7 +214,7 @@ export function CasosEspecialesPage({ session, onLogout }: CasosEspecialesPagePr
   };
 
   return (
-    <div style={{ fontFamily:"'Plus Jakarta Sans', Inter, sans-serif", background:C.bg, minHeight:"100vh" }}>
+    <div style={{ fontFamily:"var(--font-sans)", background:"var(--bt-bg-page)", minHeight:"calc(100vh - 68px)" }}>
       <style>{`
         @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
         @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
@@ -221,62 +222,39 @@ export function CasosEspecialesPage({ session, onLogout }: CasosEspecialesPagePr
         input:focus,select:focus{ outline:none; border-color:${C.teal}!important; box-shadow:0 0 0 3px ${C.teal}22; }
       `}</style>
 
-      {/* ── Page Header ─────────────────────────────────────────────────────── */}
-      <div style={{ background:C.white, borderBottom:`1px solid ${C.border}`, padding:"16px 40px" }}>
-        <div style={{ maxWidth:1280, margin:"0 auto" }}>
-          {/* Breadcrumb */}
-          <div style={{ fontSize:10, color:C.g400, letterSpacing:"0.08em", textTransform:"uppercase", marginBottom:4 }}>
-            Maestros de Asambleas · BANTRAB
-          </div>
-          <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", gap:16 }}>
-            <div>
-              <h1 style={{ fontSize:24, fontWeight:800, color:C.g900, lineHeight:1.1, marginBottom:4 }}>
-                Mantenimiento de Casos Especiales de Precalificación
-              </h1>
-              <div style={{ fontSize:12, color:C.g500, marginBottom:8 }}>
-                Gestión individual y carga masiva · Soft-delete · HU-61310
-              </div>
-              <div style={{ display:"flex", gap:6 }}>
-                {["ACCFRMXXX", "HU-61310"].map(t => (
-                  <span key={t} style={{
-                    fontSize:10, fontWeight:700, padding:"3px 10px", borderRadius:999,
-                    background: t.startsWith("HU") ? C.g100 : C.tealPill,
-                    color: t.startsWith("HU") ? C.g500 : C.tealDk,
-                    letterSpacing:"0.06em",
-                  }}>{t}</span>
-                ))}
-              </div>
-            </div>
-            <div style={{ display:"flex", gap:10, alignItems:"center", flexShrink:0 }}>
-              <span style={{ fontSize:12, color:C.g500 }}>
-                {session.usuario} <span style={{ color:C.g400 }}>({session.rol})</span>
-              </span>
-              <button onClick={onLogout} style={{
-                fontFamily:"inherit", fontSize:12, fontWeight:600, padding:"8px 14px",
-                borderRadius:8, border:`1px solid ${C.border}`, background:C.white,
-                color:C.g600, cursor:"pointer",
-              }}>Salir</button>
-              <button onClick={handleCargaMasiva} disabled={cargando} style={{
-                fontFamily:"inherit", fontSize:13, fontWeight:600, padding:"9px 18px",
-                borderRadius:8, border:`1px solid ${C.border}`, background:C.white,
-                color:C.g700, cursor:"pointer", display:"flex", alignItems:"center", gap:7,
-              }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                {cargando ? "Cargando…" : "Carga Masiva"}
-              </button>
-              <button onClick={() => { clearFeedback(); setModal({ type:"crear" }); }} style={{
-                fontFamily:"inherit", fontSize:13, fontWeight:700, padding:"9px 18px",
-                borderRadius:8, border:"none", background:C.teal, color:"#fff",
-                cursor:"pointer", display:"flex", alignItems:"center", gap:7,
-                boxShadow:`0 2px 8px ${C.teal}44`,
-              }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                Nuevo Registro
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        section="Casos Especiales"
+        title={<>Mantenimiento de <span style={{ color:"var(--bt-action-primary)" }}>Casos Especiales</span></>}
+        actions={
+          <>
+            <button onClick={handleCargaMasiva} disabled={cargando} style={{
+              fontFamily:"inherit", fontSize:13, fontWeight:600, padding:"9px 18px",
+              borderRadius:"var(--bt-radius-md)", border:"1px solid var(--bt-border-mid)", background:"var(--bt-bg-surface)",
+              color:"var(--bt-text-secondary)", display:"flex", alignItems:"center", gap:7,
+            }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              {cargando ? "Cargando..." : "Carga Masiva"}
+            </button>
+            <button onClick={() => { clearFeedback(); setModal({ type:"crear" }); }} style={{
+              fontFamily:"inherit", fontSize:13, fontWeight:700, padding:"9px 18px",
+              borderRadius:"var(--bt-radius-md)", border:"none", background:"var(--bt-action-primary)", color:"#fff",
+              display:"flex", alignItems:"center", gap:7,
+              boxShadow:"var(--bt-shadow-teal)",
+            }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Nuevo Registro
+            </button>
+          </>
+        }
+        stats={
+          <>
+            <HeaderStatCard value={loading ? "..." : String(stats.activos)} label="Casos Activos" accent="var(--bt-action-primary)" icon={<IcoUsers color="var(--bt-action-primary)" />} />
+            <HeaderStatCard value={loading ? "..." : String(stats.denegados)} label="Denegados" accent="var(--bt-status-error)" icon={<IcoBan color="var(--bt-status-error)" />} />
+            <HeaderStatCard value={loading ? "..." : String(stats.fallecidos)} label="Fallecidos" accent="var(--bt-status-warning)" icon={<IcoCheck color="var(--bt-status-warning)" />} />
+            <HeaderStatCard value={loading ? "..." : (stats.ultimaCarga ?? "—")} label="Última Carga" accent="var(--bt-status-info)" icon={<IcoDate color="var(--bt-status-info)" />} />
+          </>
+        }
+      />
 
       {/* ── Main content ────────────────────────────────────────────────────── */}
       <div style={{ maxWidth:1280, margin:"0 auto", padding:"28px 40px" }}>
@@ -294,28 +272,6 @@ export function CasosEspecialesPage({ session, onLogout }: CasosEspecialesPagePr
             <button onClick={clearFeedback} style={{ background:"transparent", border:"none", cursor:"pointer", fontSize:16, color:"inherit" }}>✕</button>
           </div>
         )}
-
-        {/* ── Stat cards ─────────────────────────────────────────────────────── */}
-        <div style={{ display:"flex", gap:16, marginBottom:24 }}>
-          <StatCard
-            icon={<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={C.teal} strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>}
-            iconBg={C.tealLt} value={loading ? "…" : String(stats.activos)} label="Casos Activos"
-          />
-          <StatCard
-            icon={<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={C.red} strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>}
-            iconBg={C.redLt} value={loading ? "…" : String(stats.denegados)} label="Denegados"
-          />
-          <StatCard
-            icon={<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={C.gold} strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>}
-            iconBg={C.goldLt} value={loading ? "…" : String(stats.fallecidos)} label="Fallecidos"
-          />
-          <StatCard
-            icon={<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={C.blue} strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>}
-            iconBg={C.blueLt}
-            value={loading ? "…" : (stats.ultimaCarga ?? "—")}
-            label="Última Carga" bold
-          />
-        </div>
 
         {/* ── Table card ─────────────────────────────────────────────────────── */}
         <div style={{ background:C.white, borderRadius:12, border:`1px solid ${C.border}`, boxShadow:"0 1px 4px rgba(0,0,0,0.05)", overflow:"hidden" }}>

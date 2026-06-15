@@ -1,7 +1,7 @@
 // ── Login Page ────────────────────────────────────────────────────────────────
 import { useState } from "react";
+import { BantrabImagotypePng, BantrabLogoText } from "@bantrab/ui";
 import { Btn, C, Spinner } from "../../ui/components/index";
-import { USE_MOCK } from "../../infrastructure/ServiceFactory";
 
 interface LoginPageProps {
   onLogin: (usuario: string, password: string) => Promise<boolean>;
@@ -26,40 +26,29 @@ export function LoginPage({ onLogin, loading, error }: LoginPageProps) {
   };
 
   return (
-    <div style={{ minHeight:"100vh", background:`linear-gradient(145deg,${C.tealLt},#f8fafc 60%,#fff)`,
+    <div style={{ minHeight:"100vh", background:"var(--bt-bg-page)",
       display:"flex", alignItems:"center", justifyContent:"center", padding:24 }}>
 
       <div style={{ width:"100%", maxWidth:420 }}>
-        {/* Logo / Header */}
         <div style={{ textAlign:"center", marginBottom:32 }}>
-          <div style={{ width:56, height:56, background:C.teal, borderRadius:14,
-            display:"flex", alignItems:"center", justifyContent:"center",
-            margin:"0 auto 16px", fontSize:28, boxShadow:`0 8px 24px ${C.teal}44` }}>
-            🏦
+          <div style={{ height:58, display:"inline-flex", alignItems:"center", gap:6, marginBottom:16 }}>
+            <BantrabImagotypePng style={{ height:46, width:"auto" }} />
+            <span style={{ width:118, height:48, position:"relative", overflow:"hidden", display:"inline-block" }}>
+              <BantrabLogoText style={{ position:"absolute", width:148, height:148, maxWidth:"none", left:-17, top:-78 }} />
+            </span>
           </div>
           <div style={{ fontSize:10, color:C.g400, letterSpacing:"0.1em",
-            textTransform:"uppercase", marginBottom:6 }}>BANTRAB · Sistema de Accionistas</div>
+            textTransform:"uppercase", marginBottom:6 }}>Sistema de Accesos</div>
           <h1 style={{ fontSize:24, fontWeight:800, color:C.g900, lineHeight:1 }}>
-            Módulo de <span style={{ color:C.gold }}>Asambleas</span>
+            Gestión de <span style={{ color:"var(--bt-action-primary)" }}>Accionistas</span>
           </h1>
         </div>
 
-        {/* Card */}
         <div style={{ background:C.white, borderRadius:16, padding:"32px 28px",
-          boxShadow:"0 4px 24px rgba(0,0,0,0.08)", border:`1px solid ${C.border}` }}>
+          boxShadow:"var(--bt-shadow-md)", border:"1px solid var(--bt-border)" }}>
 
           <div style={{ fontSize:13, fontWeight:700, color:C.g700, marginBottom:20 }}>
             Iniciar Sesión
-          </div>
-
-          {/* Mode badge */}
-          <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:20,
-            padding:"8px 12px", background: USE_MOCK ? "#FEF3DC" : C.tealLt,
-            borderRadius:8, fontSize:11, color: USE_MOCK ? "#78350F" : C.tealDk, fontWeight:600 }}>
-            <span>{USE_MOCK ? "⚙️" : "🌐"}</span>
-            {USE_MOCK
-              ? "Modo Mock — sin conexión al backend"
-              : "Modo Real — conectado al backend"}
           </div>
 
           <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
@@ -93,11 +82,9 @@ export function LoginPage({ onLogin, loading, error }: LoginPageProps) {
             </Btn>
           </div>
 
-          {/* Demo hint */}
           <div style={{ marginTop:20, padding:"12px 14px", background:C.g50,
             borderRadius:8, fontSize:11, color:C.g500 }}>
-            <strong style={{ color:C.g700 }}>Demo:</strong>&nbsp;
-            supervisor / 1234 &nbsp;·&nbsp; admin / admin123
+            Ingrese con el usuario autorizado para administrar accesos.
           </div>
         </div>
       </div>

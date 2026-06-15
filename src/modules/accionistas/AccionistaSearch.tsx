@@ -1,16 +1,10 @@
 // ── AccionistaSearch — Main Page ──────────────────────────────────────────────
 import { useState, useCallback } from "react";
 import { useAccionista, useProspecto } from "../../application/hooks/index";
-import { Btn, C, SectionHeader, Spinner, Tag } from "../../ui/components/index";
+import { C, SectionHeader, Spinner } from "../../ui/components/index";
+import { HeaderStatCard, IcoBan, IcoCheck, IcoUsers, PageHeader } from "../../ui/layout";
 import { CardActualizado, CardDesactualizado, CardPotencial } from "./components/ResultCards";
-import { USE_MOCK } from "../../infrastructure/ServiceFactory";
 import type { AuthSession } from "../../core/entities/index";
-
-const DEMO_DPIS = {
-  actualizado:    "2265780540101",
-  desactualizado: "1234567890101",
-  potencial:      "9876543210101",
-} as const;
 
 interface AccionistaSearchProps {
   session: AuthSession;
@@ -19,7 +13,7 @@ interface AccionistaSearchProps {
 
 export function AccionistaSearch({ session, onLogout }: AccionistaSearchProps) {
   const [query, setQuery]     = useState("");
-  const [activePill, setActivePill] = useState<string>("");
+  const [dpiError, setDpiError] = useState("");
   const [promoChecked, setPromoChecked] = useState(false);
   const [promoSaved, setPromoSaved]     = useState(false);
 
@@ -33,21 +27,20 @@ export function AccionistaSearch({ session, onLogout }: AccionistaSearchProps) {
 
   // ─── Search ───────────────────────────────────────────────────────────────
   const handleSearch = useCallback(async (dpi: string) => {
-    if (!dpi.trim()) return;
+    const cleanDpi = dpi.replace(/\D/g, "");
+    if (cleanDpi.length !== 13) {
+      setDpiError("El DPI es obligatorio y debe contener exactamente 13 dígitos.");
+      return;
+    }
+    setDpiError("");
     setPromoChecked(false);
     setPromoSaved(false);
     resetProspecto();
-    await buscar(dpi.trim());
+    await buscar(cleanDpi);
   }, [buscar, resetProspecto]);
 
-  const handleDemoClick = (dpi: string) => {
-    setQuery(dpi);
-    setActivePill(dpi);
-    handleSearch(dpi);
-  };
-
   const handleReset = () => {
-    setQuery(""); setActivePill(""); setPromoChecked(false); setPromoSaved(false);
+    setQuery(""); setDpiError(""); setPromoChecked(false); setPromoSaved(false);
     reset(); resetProspecto();
   };
 
@@ -79,6 +72,7 @@ export function AccionistaSearch({ session, onLogout }: AccionistaSearchProps) {
 
   // ─── Render ───────────────────────────────────────────────────────────────
   const isLoading = state.type === "loading";
+  const isDpiValid = query.length === 13;
 
   const promoProps = {
     promoChecked, promoSaved,
@@ -88,87 +82,52 @@ export function AccionistaSearch({ session, onLogout }: AccionistaSearchProps) {
   };
 
   return (
-    <div style={{ fontFamily:"inherit", background:C.bg, minHeight:"100vh" }}>
-
-      {/* Demo bar */}
-      <div style={{ background:C.g900, padding:"9px 40px",
-        display:"flex", alignItems:"center", gap:14, fontSize:11 }}>
-        <span style={{ color:C.teal, fontWeight:700, letterSpacing:"0.06em" }}>DEMO</span>
-        <span style={{ color:C.g500 }}>Escenario:</span>
-        <div style={{ display:"flex", gap:7 }}>
-          {Object.entries(DEMO_DPIS).map(([label, dpi]) => (
-            <button key={dpi} onClick={() => handleDemoClick(dpi)} style={{
-              fontFamily:"inherit", fontSize:10, fontWeight:600,
-              padding:"4px 13px", borderRadius:999,
-              border:`1px solid ${activePill===dpi ? C.teal : "rgba(255,255,255,0.18)"}`,
-              background: activePill===dpi ? C.teal : "rgba(255,255,255,0.06)",
-              color:"#fff", cursor:"pointer", letterSpacing:"0.04em",
-              textTransform:"uppercase" as const, transition:"all 0.18s" }}>
-              {label === "actualizado" ? "✓ Actualizado"
-               : label === "desactualizado" ? "⚠ Desactualizado"
-               : "◎ Potencial"}
-            </button>
-          ))}
-        </div>
-        {/* Mode indicator */}
-        <div style={{ marginLeft:"auto", display:"flex", alignItems:"center", gap:8,
-          fontSize:10, color: USE_MOCK ? "#FCD34D" : C.teal, fontWeight:600 }}>
-          {USE_MOCK ? "⚙ MOCK MODE" : "🌐 REAL API"}
-        </div>
-      </div>
-
-      {/* Page header */}
-      <div style={{ background:C.white, borderBottom:`1px solid ${C.border}`,
-        padding:"20px 40px 18px" }}>
-        <div style={{ maxWidth:1060, margin:"0 auto" }}>
-          <div style={{ fontSize:10, color:C.g400, letterSpacing:"0.1em",
-            textTransform:"uppercase" as const, marginBottom:4 }}>
-            Maestros de Asambleas · BANTRAB
-          </div>
-          <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between" }}>
-            <div>
-              <h1 style={{ fontSize:26, fontWeight:700, color:C.g900, lineHeight:1.1, marginBottom:4 }}>
-                Consulta de Accionistas
-              </h1>
-              <div style={{ fontSize:12, color:C.g400, marginBottom:10 }}>
-                Módulo de identificación · 3 flujos de clasificación · Sin eliminación física
-              </div>
-              <div style={{ display:"flex", gap:6 }}>
-                <Tag>ACCFRM0803</Tag>
-                <Tag bg={C.g100} color={C.g500}>HU-61389</Tag>
-              </div>
-            </div>
-            <div style={{ display:"flex", gap:10, alignItems:"center" }}>
-              <span style={{ fontSize:12, color:C.g500 }}>
-                {session.usuario} <span style={{ color:C.g400 }}>({session.rol})</span>
-              </span>
-              <button onClick={onLogout} style={{
-                fontFamily:"inherit", fontSize:12, fontWeight:600,
-                padding:"8px 16px", borderRadius:8,
-                border:`1px solid ${C.border}`, background:C.white,
-                color:C.g600, cursor:"pointer" }}>
-                Cerrar sesión
-              </button>
-              <button onClick={handleReset} style={{
-                fontFamily:"inherit", fontSize:13, fontWeight:600,
-                padding:"10px 20px", borderRadius:8,
-                background:C.teal, color:"#fff", border:"none",
-                cursor:"pointer", display:"flex", alignItems:"center", gap:8,
-                boxShadow:`0 2px 8px ${C.teal}44` }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" strokeWidth="2.5">
-                  <line x1="12" y1="5" x2="12" y2="19"/>
-                  <line x1="5" y1="12" x2="19" y2="12"/>
-                </svg>
-                Nueva Consulta
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div style={{ fontFamily:"inherit", background:"var(--bt-bg-page)", minHeight:"calc(100vh - 68px)" }}>
+      <PageHeader
+        section="Accionistas"
+        title={<>Consulta de <span style={{ color: "var(--bt-action-primary)" }}>Accionistas</span></>}
+        actions={
+          <button onClick={handleReset} style={{
+            fontFamily:"inherit", fontSize:13, fontWeight:700,
+            padding:"10px 20px", borderRadius:"var(--bt-radius-md)",
+            background:"var(--bt-action-primary)", color:"#fff", border:"none",
+            display:"flex", alignItems:"center", gap:8,
+            boxShadow:"var(--bt-shadow-teal)",
+          }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" strokeWidth="2.5">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Nueva Consulta
+          </button>
+        }
+        stats={
+          <>
+            <HeaderStatCard
+              value={state.type === "found" && state.data.status === "actualizado" ? 1 : 0}
+              label="Actualizados"
+              accent="var(--bt-action-primary)"
+              icon={<IcoCheck color="var(--bt-action-primary)" />}
+            />
+            <HeaderStatCard
+              value={state.type === "found" && state.data.status === "desactualizado" ? 1 : 0}
+              label="Desactualizados"
+              accent="var(--bt-status-warning)"
+              icon={<IcoBan color="var(--bt-status-warning)" />}
+            />
+            <HeaderStatCard
+              value={state.type === "not_found" ? 1 : 0}
+              label="Potenciales"
+              accent="var(--bt-status-info)"
+              icon={<IcoUsers color="var(--bt-status-info)" />}
+            />
+          </>
+        }
+      />
 
       {/* Main content */}
-      <div style={{ padding:"28px 40px", maxWidth:1060, margin:"0 auto" }}>
+      <div style={{ padding:"28px 40px", maxWidth:1280, margin:"0 auto" }}>
 
         {/* Search card */}
         <div style={{ background:C.white, borderRadius:10, marginBottom:20,
@@ -179,25 +138,30 @@ export function AccionistaSearch({ session, onLogout }: AccionistaSearchProps) {
             <div style={{ display:"flex", gap:10 }}>
               <input
                 value={query}
-                onChange={e => setQuery(e.target.value)}
+                onChange={e => {
+                  setQuery(e.target.value.replace(/\D/g, "").slice(0, 13));
+                  setDpiError("");
+                }}
                 onKeyDown={e => e.key==="Enter" && handleSearch(query)}
-                placeholder="Ingrese DPI (13 dígitos) o código de accionista..."
+                placeholder="Ingrese DPI de 13 dígitos"
                 aria-label="Buscar accionista"
+                inputMode="numeric"
+                maxLength={13}
                 style={{ flex:1, padding:"11px 16px", fontFamily:"inherit",
                   fontSize:14, fontWeight:500, border:`1px solid ${C.border}`,
                   borderRadius:8, background:C.white, color:C.g900, outline:"none",
                   boxShadow:"inset 0 1px 2px rgba(0,0,0,0.04)" }} />
               <button
                 onClick={() => handleSearch(query)}
-                disabled={isLoading || !query.trim()}
+                disabled={isLoading || query.length !== 13}
                 style={{ fontFamily:"inherit", fontSize:13, fontWeight:600,
                   padding:"0 24px", borderRadius:8, border:"none",
-                  background: isLoading||!query.trim() ? C.g200 : C.teal,
-                  color: isLoading||!query.trim() ? C.g400 : "#fff",
-                  cursor: isLoading||!query.trim() ? "not-allowed":"pointer",
+                  background: isLoading||!isDpiValid ? C.g200 : C.teal,
+                  color: isLoading||!isDpiValid ? C.g400 : "#fff",
+                  cursor: isLoading||!isDpiValid ? "not-allowed":"pointer",
                   display:"flex", alignItems:"center", gap:8,
                   whiteSpace:"nowrap" as const, transition:"background 0.2s",
-                  boxShadow: isLoading||!query.trim() ? "none" : `0 2px 6px ${C.teal}44` }}>
+                  boxShadow: isLoading||!isDpiValid ? "none" : `0 2px 6px ${C.teal}44` }}>
                 {isLoading
                   ? <><Spinner size={15} color={C.g400}/> Consultando...</>
                   : <><svg width="15" height="15" viewBox="0 0 24 24" fill="none"
@@ -207,8 +171,13 @@ export function AccionistaSearch({ session, onLogout }: AccionistaSearchProps) {
               </button>
             </div>
             <div style={{ fontSize:11, color:C.g400, marginTop:8 }}>
-              💡 También puede ingresar el código de accionista (ej. ACC-005821)
+              El DPI es obligatorio y debe ingresarse sin espacios ni guiones.
             </div>
+            {dpiError && (
+              <div style={{ marginTop:8, fontSize:12, color:C.red, fontWeight:600 }}>
+                {dpiError}
+              </div>
+            )}
           </div>
         </div>
 
@@ -221,7 +190,7 @@ export function AccionistaSearch({ session, onLogout }: AccionistaSearchProps) {
               Listo para consultar
             </div>
             <div style={{ fontSize:12, color:C.g400 }}>
-              Ingrese un DPI o use los accesos rápidos de la barra DEMO
+              Ingrese un DPI de 13 dígitos para iniciar la consulta.
             </div>
           </div>
         )}

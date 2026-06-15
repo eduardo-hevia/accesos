@@ -3,23 +3,23 @@ import type { CSSProperties, ReactNode, ButtonHTMLAttributes } from "react";
 
 // ─── Design tokens (mirrors globals.css) ─────────────────────────────────────
 export const C = {
-  teal:"#2BAB8E", tealDk:"#1d8a70", tealLt:"#E6F4F1", tealPill:"#D1EDE8",
-  gold:"#E6920A", goldLt:"#FEF3DC", goldBd:"#FCD34D",
-  green:"#16A34A", greenLt:"#DCFCE7",
-  red:"#DC2626", redLt:"#FEE2E2",
-  blue:"#2563EB", blueLt:"#EFF6FF",
-  bg:"#F4F5F7", white:"#FFFFFF", border:"#E4E7EC",
-  g50:"#F9FAFB", g100:"#F3F4F6", g200:"#E5E7EB", g300:"#D1D5DB",
-  g400:"#9CA3AF", g500:"#6B7280", g600:"#4B5563", g700:"#374151", g900:"#111827",
+  teal:"var(--teal)", tealDk:"var(--teal-dk)", tealLt:"var(--teal-lt)", tealPill:"var(--teal-pill)",
+  gold:"var(--gold)", goldLt:"var(--gold-lt)", goldBd:"var(--gold-bd)",
+  green:"var(--green)", greenLt:"var(--green-lt)",
+  red:"var(--red)", redLt:"var(--red-lt)",
+  blue:"var(--blue)", blueLt:"var(--blue-lt)",
+  bg:"var(--bg)", white:"var(--white)", border:"var(--border)",
+  g50:"var(--g50)", g100:"var(--g100)", g200:"var(--g200)", g300:"var(--g300)",
+  g400:"var(--g400)", g500:"var(--g500)", g600:"var(--g600)", g700:"var(--g700)", g900:"var(--g900)",
 } as const;
 
 // ─── Tag / Badge ──────────────────────────────────────────────────────────────
 interface TagProps { children: ReactNode; bg?: string; color?: string; }
-export function Tag({ children, bg = C.tealPill, color = C.tealDk }: TagProps) {
+export function Tag({ children, bg = "var(--tag-default-bg)", color = "var(--tag-default-text)" }: TagProps) {
   return (
     <span style={{ display:"inline-flex", alignItems:"center", fontSize:10, fontWeight:700,
       letterSpacing:"0.06em", padding:"3px 10px", borderRadius:999, background:bg, color,
-      textTransform:"uppercase" as const }}>
+      border:"1px solid var(--tag-default-border)", textTransform:"uppercase" as const }}>
       {children}
     </span>
   );
