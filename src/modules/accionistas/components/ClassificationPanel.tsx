@@ -11,7 +11,8 @@ interface ClassificationPanelProps {
 
 const PANEL_CFG = {
   actualizado: {
-    accent: C.teal, bg: C.tealLt, badgeBg: C.tealPill, badgeColor: C.tealDk,
+    accent: C.teal, bg: C.tealLt, badgeBg: C.teal, badgeColor: "#FFFFFF",
+    metaBg: "#FFFFFF", metaColor: C.tealDk,
     label: "ACTUALIZADO",
     msg: "Accionista con expediente completo y datos vigentes. Apto para participar en la próxima asamblea ordinaria sin restricciones.",
     icon: (
@@ -23,6 +24,7 @@ const PANEL_CFG = {
   },
   desactualizado: {
     accent: C.gold, bg: C.goldLt, badgeBg: "#FEF3DC", badgeColor: "#92400E",
+    metaBg: "rgba(146, 64, 14, 0.12)", metaColor: "#92400E",
     label: "DESACTUALIZADO",
     msg: "El DPI ha vencido y los datos no han sido verificados. Requiere gestión de expediente urgente antes de la próxima asamblea.",
     icon: (
@@ -34,6 +36,7 @@ const PANEL_CFG = {
   },
   potencial: {
     accent: C.blue, bg: C.blueLt, badgeBg: "#DBEAFE", badgeColor: "#1E40AF",
+    metaBg: "rgba(30, 64, 175, 0.12)", metaColor: "#1E40AF",
     label: "POTENCIAL ACCIONISTA",
     msg: "El DPI consultado no se encuentra en el registro. Complete la información preliminar y guárdelo como prospecto para seguimiento posterior.",
     icon: (
@@ -78,8 +81,8 @@ export function ClassificationPanel({ status, chips }: ClassificationPanelProps)
           textAlign:"center" as const, lineHeight:1.4 }}>
           {cfg.label}
         </div>
-        <div style={{ fontSize:9, color:cfg.accent, fontWeight:700,
-          background:`${cfg.accent}18`, padding:"2px 8px", borderRadius:999,
+        <div style={{ fontSize:9, color:cfg.metaColor, fontWeight:800,
+          background:cfg.metaBg, padding:"3px 9px", borderRadius:999,
           letterSpacing:"0.06em", textTransform:"uppercase" as const }}>
           Clasificación
         </div>

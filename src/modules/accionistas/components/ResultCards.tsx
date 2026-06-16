@@ -74,15 +74,15 @@ export function CardActualizado({ data, ...promo }: { data: Accionista } & Promo
     <>
       <StatRow data={data} />
       <Card accent={C.teal}>
-        <div style={{ padding:"20px 24px 18px", background:`linear-gradient(135deg,#f0fdf9,#dcfce7)`,
+        <div style={{ padding:"20px 24px 18px", background:"var(--status-success-panel)",
           borderBottom:`1px solid ${C.border}`, display:"flex", alignItems:"flex-start", gap:18 }}>
           <Avatar src={data.avatarUrl} nombre={data.nombre} accent={C.teal} />
           <div style={{ flex:1 }}>
             <div style={{ display:"flex", alignItems:"center", gap:10, flexWrap:"wrap", marginBottom:4 }}>
-              <span style={{ fontSize:19, fontWeight:700, color:"#14532D" }}>{data.nombre}</span>
-              <Tag>Actualizado</Tag>
+              <span style={{ fontSize:19, fontWeight:700, color:"var(--status-success-title)" }}>{data.nombre}</span>
+              <Tag bg={C.teal} color="#fff">Actualizado</Tag>
             </div>
-            <div style={{ fontSize:12, color:C.g400, marginBottom:14 }}>
+            <div style={{ fontSize:12, color:"var(--status-success-muted)", marginBottom:14 }}>
               Registro: <strong style={{ color:C.g600 }}>{data.registro}</strong>
               &ensp;·&ensp;DPI: <strong style={{ color:C.g600 }}>{data.dpi}</strong>
             </div>
@@ -96,7 +96,7 @@ export function CardActualizado({ data, ...promo }: { data: Accionista } & Promo
         <SectionHeader title="Datos del Accionista" />
         <FieldsGrid data={data} />
         <SectionHeader title="Entrega Promocional" />
-        <div style={{ padding:"14px 24px 18px" }}>
+        <div style={{ padding:"18px 24px 22px" }}>
           <PromoSection checked={promo.promoChecked} saved={promo.promoSaved}
             loading={promo.promoLoading} error={promo.promoError}
             onToggle={promo.onPromoToggle} onSave={promo.onPromoSave} />
@@ -117,12 +117,12 @@ export function CardDesactualizado({ data, ...promo }: { data: Accionista } & Pr
     <>
       <StatRow data={data} />
       <Card accent={C.gold}>
-        <div style={{ padding:"20px 24px 18px", background:`linear-gradient(135deg,#fffbeb,#fef3dc)`,
+        <div style={{ padding:"20px 24px 18px", background:"var(--status-warning-panel)",
           borderBottom:`1px solid ${C.border}`, display:"flex", alignItems:"flex-start", gap:18 }}>
           <Avatar src={data.avatarUrl} nombre={data.nombre} accent={C.gold} />
           <div style={{ flex:1 }}>
             <div style={{ display:"flex", alignItems:"center", gap:10, flexWrap:"wrap", marginBottom:4 }}>
-              <span style={{ fontSize:19, fontWeight:700, color:"#78350F" }}>{data.nombre}</span>
+              <span style={{ fontSize:19, fontWeight:700, color:"var(--status-warning-title)" }}>{data.nombre}</span>
               <Tag bg="#FEF3DC" color="#92400E">Desactualizado</Tag>
             </div>
             <div style={{ fontSize:12, color:C.g400, marginBottom:10 }}>
@@ -131,7 +131,7 @@ export function CardDesactualizado({ data, ...promo }: { data: Accionista } & Pr
             </div>
             <div style={{ display:"flex", alignItems:"flex-start", gap:8, background:C.goldLt,
               border:`1px solid ${C.goldBd}`, borderRadius:8, padding:"10px 14px", marginBottom:12,
-              fontSize:12, color:"#78350F" }}>
+              fontSize:12, color:"var(--status-warning-title)" }}>
               <svg style={{ flexShrink:0, marginTop:1 }} width="14" height="14" viewBox="0 0 24 24"
                 fill="none" stroke="currentColor" strokeWidth="2.5">
                 <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
@@ -148,10 +148,13 @@ export function CardDesactualizado({ data, ...promo }: { data: Accionista } & Pr
         <SectionHeader title="Datos del Accionista" />
         <FieldsGrid data={data} highlightVence />
         <SectionHeader title="Entrega Promocional" />
-        <div style={{ padding:"14px 24px 18px" }}>
+        <div style={{ padding:"18px 24px 22px" }}>
           <PromoSection checked={promo.promoChecked} saved={promo.promoSaved}
             loading={promo.promoLoading} error={promo.promoError}
-            onToggle={promo.onPromoToggle} onSave={promo.onPromoSave} />
+            onToggle={promo.onPromoToggle} onSave={promo.onPromoSave}
+            disabled
+            disabledTitle="Material promocional no disponible"
+            disabledDescription="El expediente está desactualizado. Actualice los datos antes de registrar la entrega promocional." />
         </div>
         <ClassificationPanel status="desactualizado" chips={[
           { label:"Acciones", value:data.acciones },
@@ -190,19 +193,19 @@ export function CardPotencial({ dpi, onSave, saving, saved, saveError }: CardPot
 
   return (
     <Card accent={C.blue}>
-      <div style={{ padding:"20px 24px 18px", background:"linear-gradient(135deg,#eff6ff,#dbeafe)",
+      <div style={{ padding:"20px 24px 18px", background:"var(--status-info-panel)",
         borderBottom:"1px solid #BFDBFE", display:"flex", alignItems:"flex-start", gap:18 }}>
         <div style={{ width:88, height:88, borderRadius:12, flexShrink:0,
-          background:"linear-gradient(135deg,#DBEAFE,#93C5FD)",
+          background:"var(--status-info-avatar)",
           display:"flex", alignItems:"center", justifyContent:"center",
           fontSize:34, border:`2.5px solid ${C.blue}`, boxShadow:`0 2px 12px ${C.blue}33` }}>🔍</div>
         <div style={{ flex:1 }}>
           <div style={{ display:"flex", alignItems:"center", gap:10, flexWrap:"wrap", marginBottom:4 }}>
-            <span style={{ fontSize:19, fontWeight:700, color:"#1E3A8A" }}>Registro No Encontrado</span>
-            <Tag bg="#DBEAFE" color="#1E40AF">Potencial Accionista</Tag>
+            <span style={{ fontSize:19, fontWeight:700, color:"var(--status-info-title)" }}>Registro No Encontrado</span>
+            <Tag bg={C.blueLt} color={C.blue}>Potencial Accionista</Tag>
           </div>
           <div style={{ fontSize:12, color:"#3B82F6", marginBottom:14 }}>
-            DPI: <strong style={{ color:"#1E3A8A" }}>{dpi}</strong> — Sin registros en el sistema central
+            DPI: <strong style={{ color:"var(--status-info-title)" }}>{dpi}</strong> — Sin registros en el sistema central
           </div>
         </div>
       </div>
@@ -246,9 +249,9 @@ export function CardPotencial({ dpi, onSave, saving, saved, saveError }: CardPot
               {selOpts.fuenteReferencia.map(o => <option key={o}>{o}</option>)}
             </select>
           </FormField>
-          <FormField label="Observaciones" col="span 3">
+          <FormField label="Nombre de las Instituciones donde laboró entre los años 1966 a 1991" col="span 3">
             <textarea value={form.observaciones} onChange={set("observaciones")} disabled={saved}
-              rows={2} placeholder="Notas del contacto..."
+              rows={2} placeholder="Ingrese el nombre de las instituciones..."
               style={{ ...inputSx, resize:"vertical" as const, lineHeight:1.6 }} />
           </FormField>
         </div>
@@ -273,7 +276,7 @@ export function CardPotencial({ dpi, onSave, saving, saved, saveError }: CardPot
       </div>
 
       <SectionHeader title="Entrega Promocional" />
-      <div style={{ padding:"14px 24px 18px" }}>
+      <div style={{ padding:"18px 24px 22px" }}>
         <PromoSection checked={false} saved={false} loading={false} error={null}
           onToggle={() => {}} onSave={() => {}} disabled />
       </div>

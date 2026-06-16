@@ -113,7 +113,7 @@ export function CasoEspecialModal({ mode, caso, saving, onSave, onClose }: Modal
           {/* Row 1 */}
           <div style={{ display:"grid", gridTemplateColumns:"140px 1fr", gap:12 }}>
             <div>
-              <label style={labelSx}>Tipo Documento</label>
+              <label style={labelSx}>Tipo</label>
               <select value={form.tipDoc} onChange={e => set("tipDoc", e.target.value as TipoDocumento)} style={iStyle}>
                 {TIPOS_DOC.map(t => <option key={t}>{t}</option>)}
               </select>
