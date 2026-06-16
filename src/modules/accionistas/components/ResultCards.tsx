@@ -246,9 +246,9 @@ export function CardPotencial({ dpi, onSave, saving, saved, saveError }: CardPot
               {selOpts.fuenteReferencia.map(o => <option key={o}>{o}</option>)}
             </select>
           </FormField>
-          <FormField label="Observaciones" col="span 3">
+          <FormField label="Nombre de las Instituciones donde laboró entre los años 1966 a 1991" col="span 3">
             <textarea value={form.observaciones} onChange={set("observaciones")} disabled={saved}
-              rows={2} placeholder="Notas del contacto..."
+              rows={2} placeholder="Ingrese el nombre de las instituciones..."
               style={{ ...inputSx, resize:"vertical" as const, lineHeight:1.6 }} />
           </FormField>
         </div>

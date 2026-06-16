@@ -17,27 +17,35 @@ export default function App() {
 
   const toggleTheme = () => setTheme((current) => current === "light" ? "dark" : "light");
 
-  if (!session) {
-    return <LoginPage onLogin={login} loading={loading} error={error} />;
-  }
-
   return (
     <ThemeProvider theme={theme}>
       <div data-theme={theme} style={{ minHeight: "100vh", background: "var(--bt-bg-page)" }}>
-        <TopBar
-          activeModule={activeModule}
-          onNavigate={setActiveModule}
-          usuario={session.usuario}
-          onLogout={logout}
-          theme={theme}
-          onToggleTheme={toggleTheme}
-        />
+        {!session ? (
+          <LoginPage
+            onLogin={login}
+            loading={loading}
+            error={error}
+            theme={theme}
+            onToggleTheme={toggleTheme}
+          />
+        ) : (
+          <>
+            <TopBar
+              activeModule={activeModule}
+              onNavigate={setActiveModule}
+              usuario={session.usuario}
+              onLogout={logout}
+              theme={theme}
+              onToggleTheme={toggleTheme}
+            />
 
-        {activeModule === "consulta" && (
-          <AccionistaSearch session={session} onLogout={logout} />
-        )}
-        {activeModule === "casos" && (
-          <CasosEspecialesPage session={session} onLogout={logout} />
+            {activeModule === "consulta" && (
+              <AccionistaSearch session={session} onLogout={logout} />
+            )}
+            {activeModule === "casos" && (
+              <CasosEspecialesPage session={session} onLogout={logout} />
+            )}
+          </>
         )}
       </div>
     </ThemeProvider>
