@@ -173,8 +173,13 @@
   --tag-default-border: rgba(125, 227, 227, 0.36);
 }
 
-[data-theme='dark'] .bt-topbar__brand-text {
-  filter: brightness(0) invert(1);
+[data-theme='dark'] .bt-topbar__brand-text,
+[data-theme='dark'] .bt-login__brand-text,
+html[data-darkreader-mode] .bt-topbar__brand-text,
+html[data-darkreader-mode] .bt-login__brand-text,
+html[data-darkreader-scheme] .bt-topbar__brand-text,
+html[data-darkreader-scheme] .bt-login__brand-text {
+  filter: brightness(0) invert(1) !important;
 }
 
 [data-theme='dark'] .bt-topbar__tab-pill {

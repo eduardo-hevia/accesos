@@ -80,7 +80,7 @@ export function CardActualizado({ data, ...promo }: { data: Accionista } & Promo
           <div style={{ flex:1 }}>
             <div style={{ display:"flex", alignItems:"center", gap:10, flexWrap:"wrap", marginBottom:4 }}>
               <span style={{ fontSize:19, fontWeight:700, color:"var(--status-success-title)" }}>{data.nombre}</span>
-              <Tag>Actualizado</Tag>
+              <Tag bg={C.teal} color="#fff">Actualizado</Tag>
             </div>
             <div style={{ fontSize:12, color:"var(--status-success-muted)", marginBottom:14 }}>
               Registro: <strong style={{ color:C.g600 }}>{data.registro}</strong>
@@ -96,7 +96,7 @@ export function CardActualizado({ data, ...promo }: { data: Accionista } & Promo
         <SectionHeader title="Datos del Accionista" />
         <FieldsGrid data={data} />
         <SectionHeader title="Entrega Promocional" />
-        <div style={{ padding:"14px 24px 18px" }}>
+        <div style={{ padding:"18px 24px 22px" }}>
           <PromoSection checked={promo.promoChecked} saved={promo.promoSaved}
             loading={promo.promoLoading} error={promo.promoError}
             onToggle={promo.onPromoToggle} onSave={promo.onPromoSave} />
@@ -148,10 +148,13 @@ export function CardDesactualizado({ data, ...promo }: { data: Accionista } & Pr
         <SectionHeader title="Datos del Accionista" />
         <FieldsGrid data={data} highlightVence />
         <SectionHeader title="Entrega Promocional" />
-        <div style={{ padding:"14px 24px 18px" }}>
+        <div style={{ padding:"18px 24px 22px" }}>
           <PromoSection checked={promo.promoChecked} saved={promo.promoSaved}
             loading={promo.promoLoading} error={promo.promoError}
-            onToggle={promo.onPromoToggle} onSave={promo.onPromoSave} />
+            onToggle={promo.onPromoToggle} onSave={promo.onPromoSave}
+            disabled
+            disabledTitle="Material promocional no disponible"
+            disabledDescription="El expediente está desactualizado. Actualice los datos antes de registrar la entrega promocional." />
         </div>
         <ClassificationPanel status="desactualizado" chips={[
           { label:"Acciones", value:data.acciones },
@@ -273,7 +276,7 @@ export function CardPotencial({ dpi, onSave, saving, saved, saveError }: CardPot
       </div>
 
       <SectionHeader title="Entrega Promocional" />
-      <div style={{ padding:"14px 24px 18px" }}>
+      <div style={{ padding:"18px 24px 22px" }}>
         <PromoSection checked={false} saved={false} loading={false} error={null}
           onToggle={() => {}} onSave={() => {}} disabled />
       </div>

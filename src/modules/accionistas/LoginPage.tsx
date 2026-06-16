@@ -32,6 +32,13 @@ export function LoginPage({ onLogin, loading, error, theme, onToggleTheme }: Log
   return (
     <div style={{ minHeight:"100vh", background:"var(--bt-bg-page)",
       display:"flex", alignItems:"center", justifyContent:"center", padding:24, position:"relative" }}>
+      <style>{`
+        [data-theme='dark'] .bt-login__brand-text,
+        html[data-darkreader-mode] .bt-login__brand-text,
+        html[data-darkreader-scheme] .bt-login__brand-text {
+          filter: brightness(0) invert(1) !important;
+        }
+      `}</style>
       <button
         type="button"
         onClick={onToggleTheme}
@@ -75,9 +82,8 @@ export function LoginPage({ onLogin, loading, error, theme, onToggleTheme }: Log
           <div style={{ height:58, display:"inline-flex", alignItems:"center", gap:6, marginBottom:16 }}>
             <BantrabImagotypePng style={{ height:46, width:"auto" }} />
             <span style={{ width:118, height:48, position:"relative", overflow:"hidden", display:"inline-block" }}>
-              <BantrabLogoText style={{
+              <BantrabLogoText className="bt-login__brand-text" data-darkreader-ignore style={{
                 position:"absolute", width:148, height:148, maxWidth:"none", left:-17, top:-78,
-                filter: theme === "dark" ? "brightness(0) invert(1)" : undefined,
               }} />
             </span>
           </div>
@@ -101,7 +107,7 @@ export function LoginPage({ onLogin, loading, error, theme, onToggleTheme }: Log
                 textTransform:"uppercase", letterSpacing:"0.08em" }}>Usuario</label>
               <input value={usuario} onChange={e=>setUsuario(e.target.value)}
                 onKeyDown={e=>e.key==="Enter"&&handleSubmit()}
-                placeholder="supervisor" style={iS} />
+                style={iS} />
             </div>
             <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
               <label style={{ fontSize:11, fontWeight:700, color:"var(--bt-text-secondary)",
@@ -109,7 +115,7 @@ export function LoginPage({ onLogin, loading, error, theme, onToggleTheme }: Log
               <input type="password" value={password}
                 onChange={e=>setPassword(e.target.value)}
                 onKeyDown={e=>e.key==="Enter"&&handleSubmit()}
-                placeholder="••••" style={iS} />
+                style={iS} />
             </div>
 
             {error && (

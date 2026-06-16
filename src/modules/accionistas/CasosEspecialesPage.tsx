@@ -3,7 +3,6 @@ import { useState, useMemo } from "react";
 import type { CasoEspecial, CasoEspecialFormData, EstadoPrecalificacion } from "../../core/entities/CasoEspecial";
 import { useCasosEspeciales } from "../../application/hooks/useCasosEspeciales";
 import { CasoEspecialModal } from "./components/CasoEspecialModal";
-import { ConfirmDialog } from "./components/ConfirmDialog";
 import { HeaderStatCard, IcoBan, IcoCheck, IcoDate, IcoUsers, PageHeader } from "../../ui/layout";
 import type { AuthSession } from "../../core/entities/index";
 
@@ -118,7 +117,7 @@ function parseCsvDemo(): CasoEspecialFormData[] {
 
 // ── Export to CSV ─────────────────────────────────────────────────────────────
 function exportExcel(casos: CasoEspecial[]) {
-  const header = ["ID","Tipo Doc","No. Documento","Nombre Completo","Estado Precal.","Fecha Defunción","Registrado"];
+  const header = ["ID","Tipo","No. Documento","Nombre Completo","Estado de Precalificación","Fecha Defunción","Registrado"];
   const rows = casos.map(c => [
     c.id, c.tipDoc, c.noDocumento, c.nombreCompleto,
     c.estadoPrecal, c.fechaDefuncion ?? "–", c.registrado,
@@ -137,8 +136,7 @@ interface CasosEspecialesPageProps { session: AuthSession; onLogout: () => void;
 type ModalState =
   | { type: "closed" }
   | { type: "crear" }
-  | { type: "editar"; caso: CasoEspecial }
-  | { type: "eliminar"; caso: CasoEspecial };
+  | { type: "editar"; caso: CasoEspecial };
 
 const TODOS_ESTADOS = "Todos los estados";
 const CAMPOS_BUSQUEDA = ["DPI y Cédula", "Nombre", "No. Documento"];
@@ -146,7 +144,7 @@ const CAMPOS_BUSQUEDA = ["DPI y Cédula", "Nombre", "No. Documento"];
 export function CasosEspecialesPage({ session }: CasosEspecialesPageProps) {
   const {
     casos, bitacora, stats, loading, saving,
-    error, success, crear, editar, eliminar, cargaMasiva, clearFeedback,
+    error, success, crear, editar, cargaMasiva, clearFeedback,
   } = useCasosEspeciales(session.usuario);
 
   const [modal,        setModal]        = useState<ModalState>({ type:"closed" });
@@ -178,12 +176,6 @@ export function CasosEspecialesPage({ session }: CasosEspecialesPageProps) {
     if (modal.type === "crear") return crear(data);
     if (modal.type === "editar") return editar(modal.caso.id, data);
     return false;
-  }
-
-  async function handleEliminar() {
-    if (modal.type !== "eliminar") return;
-    const ok = await eliminar(modal.caso.id);
-    if (ok) setModal({ type:"closed" });
   }
 
   async function handleCargaMasiva() {
@@ -334,13 +326,13 @@ export function CasosEspecialesPage({ session }: CasosEspecialesPageProps) {
                 <tr>
                   {[
                     ["ID",              "80px"],
-                    ["Tipo Doc.",       "100px"],
+                    ["Tipo",            "86px"],
                     ["No. Documento",   "160px"],
                     ["Nombre Completo", "auto"],
-                    ["Estado Precal.",  "220px"],
+                    ["Estado de Precalificación", "240px"],
                     ["Fecha Defunción", "140px"],
                     ["Registrado",      "120px"],
-                    ["Acciones",        "90px"],
+                    ["Acciones",        "72px"],
                   ].map(([label, w]) => (
                     <th key={label} style={{ ...colHd, width:w }}>{label}</th>
                   ))}
@@ -375,9 +367,6 @@ export function CasosEspecialesPage({ session }: CasosEspecialesPageProps) {
                       <div style={{ display:"flex", gap:6, justifyContent:"flex-end" }}>
                         <IconBtn title="Editar" onClick={() => { clearFeedback(); setModal({ type:"editar", caso }); }}>
                           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                        </IconBtn>
-                        <IconBtn title="Eliminar (soft)" onClick={() => { clearFeedback(); setModal({ type:"eliminar", caso }); }}>
-                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
                         </IconBtn>
                       </div>
                     </td>
@@ -479,14 +468,6 @@ export function CasosEspecialesPage({ session }: CasosEspecialesPageProps) {
           caso={modal.type === "editar" ? modal.caso : undefined}
           saving={saving}
           onSave={handleSave}
-          onClose={() => setModal({ type:"closed" })}
-        />
-      )}
-      {modal.type === "eliminar" && (
-        <ConfirmDialog
-          nombre={modal.caso.nombreCompleto}
-          saving={saving}
-          onConfirm={handleEliminar}
           onClose={() => setModal({ type:"closed" })}
         />
       )}

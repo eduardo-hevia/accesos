@@ -207,7 +207,7 @@ export function TopBar({ activeModule, onNavigate, usuario, onLogout, theme, onT
           <div className="bt-topbar__brand-lockup" aria-label="Bantrab">
             <BantrabImagotypePng className="bt-topbar__brand-mark" />
             <span className="bt-topbar__brand-text-frame" aria-hidden="true">
-              <BantrabLogoText className="bt-topbar__brand-text" />
+              <BantrabLogoText className="bt-topbar__brand-text" data-darkreader-ignore />
             </span>
           </div>
           <div className="bt-topbar__logo-divider" />
