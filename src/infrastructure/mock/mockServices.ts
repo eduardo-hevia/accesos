@@ -64,7 +64,7 @@ const MOCK_STORE = new Map<string, Accionista>([
 // ─── MockAccionistaService ─────────────────────────────────────────────────────
 export class MockAccionistaService implements AccionistaService {
   async buscar(dpi: string): Promise<ServiceResult<Accionista>> {
-    await delay();
+    await delay(1200); // visible para el spinner; el backend real definirá el tiempo
     const found = MOCK_STORE.get(dpi);
     if (!found) {
       return { ok: false, code: "NOT_FOUND", message: "Accionista no encontrado." };

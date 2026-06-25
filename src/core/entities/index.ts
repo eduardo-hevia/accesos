@@ -1,7 +1,7 @@
 // ── Core Entities — Frontend mirror of backend domain ────────────────────────
 // No framework deps. Pure TypeScript interfaces.
 
-export type AccionistaStatus = "actualizado" | "desactualizado";
+export type AccionistaStatus = "actualizado" | "desactualizado" | "potencial";
 
 export interface Accionista {
   readonly id: string;
@@ -22,6 +22,18 @@ export interface Accionista {
   readonly status: AccionistaStatus;
   readonly promocionalEntregado: boolean;
   readonly promocionalFecha: string | null;
+  // Solo aplica al estado "potencial". El backend completará estos datos a futuro.
+  readonly observaciones?: string;
+}
+
+// ── Capturas del operador durante el acceso ──────────────────────────────────
+// Preparado para futura persistencia en backend (talla / alimentación).
+export type TallaPlayera = "XS" | "S" | "M" | "L" | "XL" | "2XL" | "3XL";
+export type TipoAlimentacion = "Normal" | "Saludable" | "De dieta";
+
+export interface PreferenciasAcceso {
+  readonly talla: TallaPlayera | null;
+  readonly alimentacion: TipoAlimentacion | null;
 }
 
 export interface Prospecto {

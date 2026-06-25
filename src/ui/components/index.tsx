@@ -54,8 +54,8 @@ const BTN_STYLES: Record<BtnVariant, CSSProperties> = {
 };
 export function Btn({ variant="primary", size="md", children, disabled, style, ...rest }: BtnProps) {
   const base: CSSProperties = {
-    fontFamily:"inherit", fontSize: size==="sm"?11:13, fontWeight:600,
-    padding: size==="sm"?"7px 14px":"10px 20px",
+    fontFamily:"inherit", fontSize: size==="sm"?12.5:14, fontWeight:600,
+    padding: size==="sm"?"8px 16px":"11px 22px",
     borderRadius:8, cursor: disabled?"not-allowed":"pointer",
     display:"inline-flex", alignItems:"center", gap:6,
     transition:"opacity .15s, transform .1s", letterSpacing:"0.01em",
@@ -89,15 +89,16 @@ export function DataCell({ label, value, highlight=false }: DataCellProps) {
 }
 
 // ─── SectionHeader ────────────────────────────────────────────────────────────
-interface SectionHeaderProps { title: string; right?: ReactNode; }
-export function SectionHeader({ title, right }: SectionHeaderProps) {
+interface SectionHeaderProps { title: string; right?: ReactNode; icon?: ReactNode; }
+export function SectionHeader({ title, right, icon }: SectionHeaderProps) {
   return (
     <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between",
       padding:"12px 24px", borderBottom:`1px solid ${C.border}`, background:C.white }}>
       <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-        <div style={{ width:4, height:18, background:C.teal, borderRadius:2 }} />
-        <span style={{ fontSize:11, fontWeight:700, color:C.g700,
-          textTransform:"uppercase", letterSpacing:"0.08em" }}>{title}</span>
+        <div style={{ width:4, height:20, background:C.teal, borderRadius:2 }} />
+        {icon && <span style={{ display:"inline-flex", color:C.teal }}>{icon}</span>}
+        <span style={{ fontSize:13, fontWeight:700, color:C.g700,
+          textTransform:"uppercase", letterSpacing:"0.07em" }}>{title}</span>
       </div>
       {right}
     </div>
@@ -132,6 +133,26 @@ export function Spinner({ size=16, color=C.white }: { size?: number; color?: str
   );
 }
 
+// ─── BrandSpinner (molinete Bantrab — spinner.gif de @bantrab/ui) ──────────────
+export function BrandSpinner({ size=48 }: { size?: number }) {
+  return (
+    <img src="/spinner.gif" alt="Cargando" width={size} height={size}
+      style={{ display:"inline-block", objectFit:"contain", verticalAlign:"middle" }} />
+  );
+}
+
+// ─── Section (tarjeta con encabezado, estilo del módulo) ──────────────────────
+export function Section({ title, right, icon, children }: { title: string; right?: ReactNode; icon?: ReactNode; children: ReactNode }) {
+  return (
+    <div style={{ background:C.white, borderRadius:16, overflow:"hidden",
+      border:`1px solid ${C.border}`, boxShadow:"0 2px 8px rgba(10,22,40,0.06)",
+      marginBottom:16 }}>
+      <SectionHeader title={title} right={right} icon={icon} />
+      <div style={{ padding:"20px 26px" }}>{children}</div>
+    </div>
+  );
+}
+
 // ─── Card wrapper ─────────────────────────────────────────────────────────────
 interface CardProps { children: ReactNode; accent: string; }
 export function Card({ children, accent }: CardProps) {
@@ -149,8 +170,8 @@ export function FormField({ label, children, col }: FormFieldProps) {
   return (
     <div style={{ display:"flex", flexDirection:"column", gap:5,
       gridColumn: col ?? undefined }}>
-      <label style={{ fontSize:10, fontWeight:700, color:C.g500,
-        textTransform:"uppercase", letterSpacing:"0.08em" }}>{label}</label>
+      <label style={{ fontSize:11.5, fontWeight:700, color:C.g500,
+        textTransform:"uppercase", letterSpacing:"0.07em" }}>{label}</label>
       {children}
     </div>
   );
@@ -158,7 +179,7 @@ export function FormField({ label, children, col }: FormFieldProps) {
 
 // ─── Shared input style ───────────────────────────────────────────────────────
 export const inputSx: CSSProperties = {
-  padding:"9px 12px", fontFamily:"inherit", fontSize:12,
+  padding:"11px 14px", fontFamily:"inherit", fontSize:14,
   border:`1px solid #E4E7EC`, borderRadius:8,
   background:"#F9FAFB", color:"#111827", outline:"none", width:"100%",
 };
