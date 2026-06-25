@@ -308,7 +308,7 @@ export function PageHeader({ title, section, actions, stats }: PageHeaderProps) 
           <span>{section}</span>
         </div>
 
-        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 24, marginBottom: stats ? 24 : 0 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 24, marginBottom: stats ? 24 : 0 }}>
           <h1 style={{ fontSize: 28, fontWeight: 800, color: "var(--bt-text-primary)", margin: 0, letterSpacing: "-.03em", lineHeight: 1.1 }}>
             {title}
           </h1>
