@@ -35,8 +35,8 @@ export function AccionistaResult({ data }: { data: Accionista }) {
       {/* Talla y alimentación: solo accionistas reales (no potenciales) */}
       {!isPotencial && (
         <>
-          <TallaSection value={talla} onChange={setTalla} />
-          <AlimentacionSection value={alimentacion} onChange={setAlimentacion} />
+          <TallaSection value={talla} onChange={setTalla} disabled={isDesactualizado} />
+          <AlimentacionSection value={alimentacion} onChange={setAlimentacion} disabled={isDesactualizado} />
         </>
       )}
 

@@ -15,7 +15,7 @@
     "strict": true,
     "noUncheckedIndexedAccess": false,
     "noImplicitReturns": true,
-    "baseUrl": ".",
+    "basecdUrl": ".",
     "paths": {
       "@core/*":    ["src/core/*"],
       "@infra/*":   ["src/infrastructure/*"],
