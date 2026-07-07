@@ -34,24 +34,28 @@ interface CellProps {
   onClick: () => void;
   lead?: ReactNode;     // emoji/ícono opcional
   compact?: boolean;
+  disabled?: boolean;
   children: ReactNode;
 }
-function SelectCell({ active, onClick, lead, compact = false, children }: CellProps) {
+function SelectCell({ active, onClick, lead, compact = false, disabled = false, children }: CellProps) {
   const [hover, setHover] = useState(false);
-  const border = active ? C.teal : (hover ? C.teal : C.g200);
-  const bg     = active ? C.teal : (hover ? C.tealLt : C.white);
-  const color  = active ? "#fff" : (hover ? C.tealDk : C.g700);
+  const isHover = hover && !disabled;
+  const border = disabled ? C.g200 : (active ? C.teal : (isHover ? C.teal : C.g200));
+  const bg     = disabled ? C.g50 : (active ? C.teal : (isHover ? C.tealLt : C.white));
+  const color  = disabled ? C.g400 : (active ? "#fff" : (isHover ? C.tealDk : C.g700));
 
   return (
-    <button type="button" onClick={onClick} aria-pressed={active}
+    <button type="button" onClick={onClick} aria-pressed={active} disabled={disabled}
       onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
       style={{ position:"relative", width:"100%", minHeight:compact ? 48 : 64, fontFamily:"inherit",
-        fontSize:compact ? 14 : 16, fontWeight:active ? 800 : 700, cursor:"pointer",
+        fontSize:compact ? 14 : 16, fontWeight:active ? 800 : 700,
+        cursor: disabled ? "not-allowed" : "pointer",
         padding:compact ? "8px 10px" : "14px 12px", borderRadius:compact ? 10 : 14,
         transition:"all 0.16s ease",
         border:`1.5px solid ${border}`, background:bg, color,
-        transform: active ? "translateY(-2px)" : "none",
-        boxShadow: active ? `0 8px 18px ${C.teal}45, 0 0 0 3px ${C.teal}22` : "none",
+        transform: active && !disabled ? "translateY(-2px)" : "none",
+        boxShadow: active && !disabled ? `0 8px 18px ${C.teal}45, 0 0 0 3px ${C.teal}22` : "none",
+        opacity: disabled ? 0.72 : 1,
         display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
         gap:compact ? 2 : 5 }}>
       {active && (
@@ -72,33 +76,49 @@ function Hint({ children }: { children: ReactNode }) {
 }
 
 // ─── Talla de playera ─────────────────────────────────────────────────────────
-export function TallaSection({ value, onChange }: { value: TallaPlayera | null; onChange: (t: TallaPlayera) => void }) {
+export function TallaSection({ value, onChange, disabled = false }: {
+  value: TallaPlayera | null;
+  onChange: (t: TallaPlayera) => void;
+  disabled?: boolean;
+}) {
   return (
     <Section title="Talla de Playera" icon={ShirtIcon}>
       <div style={{ display:"grid", gridTemplateColumns:"repeat(3, minmax(0, 1fr))", gap:8 }}>
         {TALLAS.map(t => (
-          <SelectCell key={t} active={value === t} onClick={() => onChange(t)} lead="👕" compact>
+          <SelectCell key={t} active={value === t} onClick={() => onChange(t)} lead="👕" compact disabled={disabled}>
             {t}
           </SelectCell>
         ))}
       </div>
-      <Hint>Seleccione una única talla. La persistencia se realizará cuando el backend esté disponible.</Hint>
+      <Hint>
+        {disabled
+          ? "No disponible para accionistas desactualizados."
+          : "Seleccione una única talla. La persistencia se realizará cuando el backend esté disponible."}
+      </Hint>
     </Section>
   );
 }
 
 // ─── Alimentación ─────────────────────────────────────────────────────────────
-export function AlimentacionSection({ value, onChange }: { value: TipoAlimentacion | null; onChange: (a: TipoAlimentacion) => void }) {
+export function AlimentacionSection({ value, onChange, disabled = false }: {
+  value: TipoAlimentacion | null;
+  onChange: (a: TipoAlimentacion) => void;
+  disabled?: boolean;
+}) {
   return (
     <Section title="Alimentación" icon={FoodIcon}>
       <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(160px, 1fr))", gap:12 }}>
         {ALIMENTACION.map(a => (
-          <SelectCell key={a.value} active={value === a.value} onClick={() => onChange(a.value)} lead={a.icon}>
+          <SelectCell key={a.value} active={value === a.value} onClick={() => onChange(a.value)} lead={a.icon} disabled={disabled}>
             {a.value}
           </SelectCell>
         ))}
       </div>
-      <Hint>Seleccione una única opción. La persistencia se realizará cuando el backend esté disponible.</Hint>
+      <Hint>
+        {disabled
+          ? "No disponible para accionistas desactualizados."
+          : "Seleccione una única opción. La persistencia se realizará cuando el backend esté disponible."}
+      </Hint>
     </Section>
   );
 }
