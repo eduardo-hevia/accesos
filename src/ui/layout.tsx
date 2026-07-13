@@ -316,7 +316,14 @@ export function PageHeader({ title, section, actions, stats }: PageHeaderProps) 
         </div>
 
         {stats && (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 14 }}>
+          <div className="bt-stats-container" style={{ 
+            display: "flex", 
+            gap: 14, 
+            overflowX: "auto", 
+            paddingBottom: 4,
+            scrollbarWidth: "none"
+          }}>
+            <style>{`.bt-stats-container::-webkit-scrollbar { display: none; }`}</style>
             {stats}
           </div>
         )}
@@ -338,20 +345,22 @@ export function HeaderStatCard({ value, label, icon, accent }: HeaderStatCardPro
       background: "var(--bt-bg-surface)",
       border: "1.5px solid var(--bt-border)",
       borderRadius: "var(--bt-radius-lg)",
-      padding: "18px 20px",
+      padding: "16px",
       display: "flex",
       alignItems: "center",
-      gap: 16,
+      gap: 12,
       position: "relative",
       overflow: "hidden",
       boxShadow: "var(--bt-shadow-xs)",
+      flex: "1 0 auto",
+      minWidth: 160,
     }}>
       <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, transparent, ${accent}, transparent)`, opacity: .7 }} />
       <div style={{ width: 46, height: 46, borderRadius: 12, background: `${accent}15`, border: `1px solid ${accent}25`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
         {icon}
       </div>
       <div>
-        <div style={{ fontSize: 28, fontWeight: 800, color: "var(--bt-text-primary)", lineHeight: 1.05, letterSpacing: "-.02em" }}>{value}</div>
+        <div style={{ fontSize: String(value).length > 6 ? 20 : 28, fontWeight: 800, color: "var(--bt-text-primary)", lineHeight: 1.05, letterSpacing: "-.02em" }}>{value}</div>
         <div style={{ fontSize: 10, fontWeight: 600, color: "var(--bt-stat-label)", letterSpacing: ".08em", marginTop: 3, textTransform: "uppercase" }}>{label}</div>
       </div>
     </div>

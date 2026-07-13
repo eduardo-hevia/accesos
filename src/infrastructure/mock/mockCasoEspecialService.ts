@@ -22,7 +22,7 @@ let STORE: CasoEspecial[] = [
     registrado: "11/04/2026", activo: true,
   },
   {
-    id: "003", tipDoc: "Cédula", noDocumento: "9876543",
+    id: "003", tipDoc: "DPI", noDocumento: "9876543",
     nombreCompleto: "HERRERA CASTILLO JUAN ANTONIO",
     estadoPrecal: "Revocado", fechaDefuncion: null,
     registrado: "11/04/2026", activo: true,
@@ -30,13 +30,13 @@ let STORE: CasoEspecial[] = [
   {
     id: "004", tipDoc: "DPI", noDocumento: "3344556670202",
     nombreCompleto: "RUIZ MORALES ANA PATRICIA",
-    estadoPrecal: "Limitación Participación Asamblea", fechaDefuncion: null,
+    estadoPrecal: "Limitación Asamblea", fechaDefuncion: null,
     registrado: "12/04/2026", activo: true,
   },
   {
     id: "005", tipDoc: "DPI", noDocumento: "5566778890303",
     nombreCompleto: "GARCÍA LÓPEZ PEDRO PABLO",
-    estadoPrecal: "Acciones Adquiridas Anómalamente", fechaDefuncion: null,
+    estadoPrecal: "Acciones Anómalas", fechaDefuncion: null,
     registrado: "13/04/2026", activo: true,
   },
 ];

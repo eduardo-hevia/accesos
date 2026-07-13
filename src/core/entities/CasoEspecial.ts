@@ -1,13 +1,15 @@
 // ── CasoEspecial — Entidad de dominio ────────────────────────────────────────
 
-export type TipoDocumento = "DPI" | "Cédula" | "Pasaporte";
+export type TipoDocumento = "DPI";
 
 export type EstadoPrecalificacion =
+  | "Aprobado"
+  | "Nuevo"
   | "Denegado"
-  | "Fallecido"
+  | "Acciones Anómalas"
   | "Revocado"
-  | "Limitación Participación Asamblea"
-  | "Acciones Adquiridas Anómalamente";
+  | "Fallecido"
+  | "Limitación Asamblea";
 
 export interface CasoEspecial {
   readonly id: string;             // correlativo formateado 001, 002…
@@ -40,7 +42,6 @@ export interface BitacoraMovimiento {
 // Stats derivados
 export interface CasosStats {
   activos: number;
-  denegados: number;
-  fallecidos: number;
+  porEstado: Record<EstadoPrecalificacion, number>;
   ultimaCarga: string | null;
 }

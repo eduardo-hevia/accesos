@@ -3,11 +3,10 @@ import { useState, useEffect } from "react";
 import type { CasoEspecial, CasoEspecialFormData, EstadoPrecalificacion, TipoDocumento } from "../../../core/entities/CasoEspecial";
 import { C } from "../../../ui/components/index";
 
-const TIPOS_DOC: TipoDocumento[] = ["DPI", "Cédula", "Pasaporte"];
+const TIPOS_DOC: TipoDocumento[] = ["DPI"];
 const ESTADOS: EstadoPrecalificacion[] = [
-  "Denegado", "Fallecido", "Revocado",
-  "Limitación Participación Asamblea",
-  "Acciones Adquiridas Anómalamente",
+  "Aprobado", "Nuevo", "Denegado", "Acciones Anómalas",
+  "Revocado", "Fallecido", "Limitación Asamblea"
 ];
 
 interface ModalProps {

@@ -22,11 +22,13 @@ const C = {
 
 // ── Estado badge config ───────────────────────────────────────────────────────
 const ESTADO_CFG: Record<EstadoPrecalificacion, { bg: string; color: string; dot: string }> = {
+  "Aprobado":                          { bg:"var(--green-lt)", color:"var(--green)", dot:"var(--green)" },
+  "Nuevo":                             { bg:"var(--blue-lt)", color:"var(--blue)", dot:"var(--blue)" },
   "Denegado":                          { bg:"var(--red-lt)", color:"var(--red)", dot:"var(--red)" },
-  "Fallecido":                         { bg:"var(--g100)", color:"var(--g700)", dot:"var(--g400)" },
+  "Acciones Anómalas":                 { bg:"var(--gold-lt)", color:"var(--gold)", dot:"var(--gold)" },
   "Revocado":                          { bg:"rgba(124,58,237,.16)", color:"#A78BFA", dot:"#8B5CF6" },
-  "Limitación Participación Asamblea": { bg:"var(--teal-pill)", color:"var(--teal-dk)", dot:"var(--teal)" },
-  "Acciones Adquiridas Anómalamente":  { bg:"var(--gold-lt)", color:"var(--gold)", dot:"var(--gold)" },
+  "Fallecido":                         { bg:"var(--g100)", color:"var(--g700)", dot:"var(--g400)" },
+  "Limitación Asamblea":               { bg:"var(--teal-pill)", color:"var(--teal-dk)", dot:"var(--teal)" },
 };
 
 // ── Sub-components ────────────────────────────────────────────────────────────
@@ -111,7 +113,7 @@ function IconBtn({ title, onClick, children }: { title: string; onClick: () => v
 function parseCsvDemo(): CasoEspecialFormData[] {
   return [
     { tipDoc:"DPI", noDocumento:"9988776655443", nombreCompleto:"CHAN BATZ ROSA LINDA", estadoPrecal:"Denegado", fechaDefuncion:"" },
-    { tipDoc:"Cédula", noDocumento:"1122334", nombreCompleto:"AJÚ SALAZAR MARIO", estadoPrecal:"Revocado", fechaDefuncion:"" },
+    { tipDoc:"DPI", noDocumento:"1122334", nombreCompleto:"AJÚ SALAZAR MARIO", estadoPrecal:"Revocado", fechaDefuncion:"" },
   ];
 }
 
@@ -139,7 +141,7 @@ type ModalState =
   | { type: "editar"; caso: CasoEspecial };
 
 const TODOS_ESTADOS = "Todos los estados";
-const CAMPOS_BUSQUEDA = ["DPI y Cédula", "Nombre", "No. Documento"];
+const CAMPOS_BUSQUEDA = ["DPI", "Nombre", "No. Documento"];
 
 export function CasosEspecialesPage({ session }: CasosEspecialesPageProps) {
   const {
@@ -241,8 +243,20 @@ export function CasosEspecialesPage({ session }: CasosEspecialesPageProps) {
         stats={
           <>
             <HeaderStatCard value={loading ? "..." : String(stats.activos)} label="Casos Activos" accent="var(--bt-action-primary)" icon={<IcoUsers color="var(--bt-action-primary)" />} />
-            <HeaderStatCard value={loading ? "..." : String(stats.denegados)} label="Denegados" accent="var(--bt-status-error)" icon={<IcoBan color="var(--bt-status-error)" />} />
-            <HeaderStatCard value={loading ? "..." : String(stats.fallecidos)} label="Fallecidos" accent="var(--bt-status-warning)" icon={<IcoCheck color="var(--bt-status-warning)" />} />
+            {
+              (Object.keys(ESTADO_CFG) as EstadoPrecalificacion[]).map(estado => {
+                const cfg = ESTADO_CFG[estado];
+                return (
+                  <HeaderStatCard 
+                    key={estado}
+                    value={loading ? "..." : String(stats.porEstado?.[estado] || 0)} 
+                    label={estado} 
+                    accent={cfg.color} 
+                    icon={<div style={{ width:12, height:12, borderRadius:"50%", background:cfg.dot }} />} 
+                  />
+                )
+              })
+            }
             <HeaderStatCard value={loading ? "..." : (stats.ultimaCarga ?? "—")} label="Última Carga" accent="var(--bt-status-info)" icon={<IcoDate color="var(--bt-status-info)" />} />
           </>
         }

@@ -1,6 +1,6 @@
 // ── useCasosEspeciales — Application Hook ─────────────────────────────────────
 import { useState, useCallback, useEffect } from "react";
-import type { CasoEspecial, CasoEspecialFormData, BitacoraMovimiento, CasosStats } from "../../core/entities/CasoEspecial";
+import type { CasoEspecial, CasoEspecialFormData, BitacoraMovimiento, CasosStats, EstadoPrecalificacion } from "../../core/entities/CasoEspecial";
 import { MockCasoEspecialService } from "../../infrastructure/mock/mockCasoEspecialService";
 
 // Singleton (swap for ApiCasoEspecialService when VITE_USE_MOCK=false)
@@ -8,19 +8,38 @@ const svc = new MockCasoEspecialService();
 
 function computeStats(casos: CasoEspecial[]): CasosStats {
   const activos  = casos.filter(c => c.activo).length;
-  const denegados = casos.filter(c => c.activo && c.estadoPrecal === "Denegado").length;
-  const fallecidos = casos.filter(c => c.activo && c.estadoPrecal === "Fallecido").length;
+  
+  const porEstado = {
+    "Aprobado": 0,
+    "Nuevo": 0,
+    "Denegado": 0,
+    "Acciones Anómalas": 0,
+    "Revocado": 0,
+    "Fallecido": 0,
+    "Limitación Asamblea": 0
+  } as Record<EstadoPrecalificacion, number>;
+
+  casos.forEach(c => {
+    if (c.activo && porEstado[c.estadoPrecal] !== undefined) {
+      porEstado[c.estadoPrecal]++;
+    }
+  });
+
   const dates = casos.filter(c => c.activo).map(c => c.registrado);
   const ultimaCarga = dates.length
     ? dates.reduce((a, b) => (new Date(a.split("/").reverse().join("-")) > new Date(b.split("/").reverse().join("-")) ? a : b))
     : null;
-  return { activos, denegados, fallecidos, ultimaCarga };
+  return { activos, porEstado, ultimaCarga };
 }
 
 export function useCasosEspeciales(usuario: string) {
   const [casos,    setCasos]    = useState<CasoEspecial[]>([]);
   const [bitacora, setBitacora] = useState<BitacoraMovimiento[]>([]);
-  const [stats,    setStats]    = useState<CasosStats>({ activos:0, denegados:0, fallecidos:0, ultimaCarga:null });
+  const [stats,    setStats]    = useState<CasosStats>({ 
+    activos:0, 
+    porEstado: { "Aprobado": 0, "Nuevo": 0, "Denegado": 0, "Acciones Anómalas": 0, "Revocado": 0, "Fallecido": 0, "Limitación Asamblea": 0 }, 
+    ultimaCarga:null 
+  });
   const [loading,  setLoading]  = useState(true);
   const [saving,   setSaving]   = useState(false);
   const [error,    setError]    = useState<string | null>(null);
